@@ -1,0 +1,37 @@
+<mxfile host="Electron">
+  <diagram name="Página-1" id="OX-kiwi9zgpAMmqKHK4N">
+    <mxGraphModel dx="848" dy="558" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="_Puyd59zCUgy8667fh2s-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="PRNG" vertex="1">
+          <mxGeometry height="60" width="120" x="150" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="_Puyd59zCUgy8667fh2s-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Valor X generado por el ciclo Runge-Kutta" vertex="1">
+          <mxGeometry height="60" width="120" x="150" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="_Puyd59zCUgy8667fh2s-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Multiplicamos por un valor escalar grande (10e6)" vertex="1">
+          <mxGeometry height="60" width="120" x="354" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="_Puyd59zCUgy8667fh2s-4" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="_Puyd59zCUgy8667fh2s-3" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="210" />
+            </Array>
+            <mxPoint x="270" y="210" as="sourcePoint" />
+            <mxPoint x="320" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_Puyd59zCUgy8667fh2s-5" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="474" y="210" as="sourcePoint" />
+            <mxPoint x="570" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_Puyd59zCUgy8667fh2s-6" parent="1" style="whiteSpace=wrap;html=1;aspect=fixed;" value="Valor X modificado" vertex="1">
+          <mxGeometry height="80" width="80" x="570" y="170" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
