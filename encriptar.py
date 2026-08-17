@@ -104,7 +104,6 @@ def cifrar(ruta, llave_adaptada):
 
     llave = generar_keystream(llave_adaptada, cantidad_bits)
 
-    # Solo aplicamos XOR una vez
     bits_cifrados = np.bitwise_xor(texto_binario, llave)
     datos_cifrados = np.packbits(bits_cifrados).tobytes()
 
@@ -113,7 +112,7 @@ def cifrar(ruta, llave_adaptada):
         f.write(datos_cifrados)
         
     borrado_seguro(ruta)
-    print(f"Cifrado y original destruido: {ruta_salida}")
+    print(f"Encriptado: {ruta_salida}")
 
 if __name__ == "__main__":
     clave_generada = os.urandom(16)
