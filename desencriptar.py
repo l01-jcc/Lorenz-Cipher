@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import hashlib
+from pathlib import Path
 
 def rk4_paso(estado, dt, sigma, rho, betha):
     x, y, z = estado
@@ -41,7 +42,6 @@ def rk4_paso(estado, dt, sigma, rho, betha):
 
 
 def generar_keystream(llave_estado, num_bits, dt=0.01, sigma=10.0, rho=28.0, beta=2.6667):
-    
     estado = np.copy(llave_estado)
     keystream = np.zeros(num_bits, dtype=np.uint8)
     
@@ -49,64 +49,18 @@ def generar_keystream(llave_estado, num_bits, dt=0.01, sigma=10.0, rho=28.0, bet
         estado = rk4_paso(estado, dt, sigma, rho, beta)
         
     for i in range(num_bits):
-        
         estado = rk4_paso(estado, dt, sigma, rho, beta)
-        
         x = estado[0]
-               
         valor_profundo = int(abs(x * 1e6))
-        bit = valor_profundo % 2
-        
-        keystream[i] = bit
+        keystream[i] = valor_profundo % 2
         
     return keystream
 
-def texto_a_bits(texto):
-
-    bits = []
-    for letra in texto:
-        binario = bin(ord(letra))[2:].zfill(8)
-
-        for bit in binario:
-            bits.append(int(bit))
-
-    return np.array(bits, dtype=np.uint8)
-
-def bits_a_texto(bits):
-    texto = ""
-
-    for i in range(0, len(bits), 8):
-        byte = bits[i:i+8]
-
-        binario = ""
-
-        for bit in byte:
-            binario += str(bit)
-
-        numero = int(binario, 2)
-
-        letra = chr(numero)
-        texto += letra
-    return texto
-
-def cifrado(mensaje, llave):
-
-    texto_cifrado = np.bitwise_xor(mensaje, llave)
-
-    return texto_cifrado
-
-def adaptar_ci(password: str, salt_existence: bytes = None):
-
-    if salt_existence is None:
-        salt = os.urandom(16)
-
-    else:
-        salt = salt_existence
-
+def adaptar_ci(clave_maestra: bytes):
     hash_total = hashlib.pbkdf2_hmac(
-            hash_name ="sha256",
-            password=password.encode("utf-8"),
-            salt = salt,
+            hash_name="sha256",
+            password=clave_maestra,
+            salt=clave_maestra,
             iterations=10000,
             dklen=24
             )
@@ -116,7 +70,6 @@ def adaptar_ci(password: str, salt_existence: bytes = None):
     bytes_z = hash_total[16:24]
     
     MAX64 = 2**64 - 1
-
     x_int = int.from_bytes(bytes_x, byteorder="big")
     y_int = int.from_bytes(bytes_y, byteorder="big")
     z_int = int.from_bytes(bytes_z, byteorder="big")
@@ -125,29 +78,50 @@ def adaptar_ci(password: str, salt_existence: bytes = None):
     y0 = (y_int / MAX64) * 40 - 20
     z0 = (z_int / MAX64) * 40 - 20
     
-    return x0, y0, z0, salt
+    return np.array([x0, y0, z0], dtype=np.float64)
 
 
+def descifrar_archivo(ruta_archivo, llave_adaptada):
+    with open(ruta_archivo, 'rb') as f:
+        datos_cifrados = f.read()
 
-salt_input = input("Salt: ")
-salt_bytes = bytes.fromhex(salt_input)
+    if not datos_cifrados: return
 
-contraseña = input("Ingrese la contraseña para desencriptar:")
+    bits_cifrados = np.unpackbits(np.frombuffer(datos_cifrados, dtype=np.uint8))
+    cantidad_bits = len(bits_cifrados)
 
-x, y, z, salt = adaptar_ci(contraseña, salt_existence=salt_bytes)
+    llave = generar_keystream(llave_adaptada, cantidad_bits)
+    bits_descifrados = np.bitwise_xor(bits_cifrados, llave)
 
-llave_adaptada = np.array([x, y, z], dtype=np.float64)
+    datos_descifrados = np.packbits(bits_descifrados).tobytes()
 
-texto_encriptado_bits = input("Ingrese los bits encriptados: ")
-texto_binario = np.array([int(b) for b in texto_encriptado_bits], dtype=np.uint8)
-cantidad_bits = len(texto_binario)
+    ruta_salida = ruta_archivo.with_suffix('')
+    
+    with open(ruta_salida, 'wb') as f:
+        f.write(datos_descifrados)
+        
+    os.remove(ruta_archivo)
+    
+    print(f"Descifrado y restaurado: {ruta_salida}")
 
-llave = generar_keystream(llave_adaptada, cantidad_bits)
+if __name__ == "__main__":
+    clave_input = input("Ingrese la llave (hexadecimal) para descifrar: ")
+    try:
+        clave_maestra_bytes = bytes.fromhex(clave_input)
+    except ValueError:
+        print("Error: La llave ingresada no tiene un formato hexadecimal válido.")
+        exit(1)
 
-bits_desencriptados = cifrado(texto_binario, llave)
+    llave_adaptada = adaptar_ci(clave_maestra_bytes)
 
-texto_desencriptado = bits_a_texto(bits_desencriptados)
+    ruta_input = input("Ingrese la ruta del archivo o directorio a descifrar: ")
+    ruta_obj = Path(ruta_input)
 
-print(f"El texto desencriptado es: {texto_desencriptado}")
-
-
+    if ruta_obj.is_file() and ruta_obj.suffix == '.enc':
+        descifrar_archivo(ruta_obj, llave_adaptada)
+    elif ruta_obj.is_dir():
+        for archivo_path in ruta_obj.rglob('*.enc'):
+            if archivo_path.is_file():
+                descifrar_archivo(archivo_path, llave_adaptada)
+    else:
+        print("No se encontró la ruta o el archivo no tiene la extensión .cifrado")
