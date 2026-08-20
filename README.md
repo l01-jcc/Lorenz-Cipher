@@ -1,1 +1,2 @@
-Herramienta de cifrado y descifrado de archivos que utiliza el Atractor de Lorenz a través del método numérico de Runge-Kutta de 4to orden (RK4).
+Lorenz Cipher
+A terminal-based cryptography tool that leverages the **Lorenz Attractor** and the **4th-order Runge-Kutta (RK4)** numerical method to generate a highly sensitive, pseudo-random keystream (PRNG) for file encryption.
