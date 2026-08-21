@@ -1,4 +1,4 @@
-Lorenz Cipher
+## Lorenz Cipher
 A terminal-based cryptography tool that leverages the **Lorenz Attractor** and the **4th-order Runge-Kutta (RK4)** numerical method to generate a highly sensitive, pseudo-random keystream (PRNG) for file encryption.
 By relying on deterministic chaos, even a microscopic variation in the initial conditions generates complete divergence in the bitstream, ensuring robust XOR-based encryption.
 
