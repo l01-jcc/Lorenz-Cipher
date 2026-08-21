@@ -20,7 +20,7 @@ Where the standard parameters $\sigma = 10$, $\rho = 28$, and $\beta = 8/3$ are 
 ## Installation
 **1. Clone the repository:**
 ```bash
-git clone [https://github.com/l01-jcc/Lorenz-Cipher.git](https://github.com/l01-jcc/Lorenz-Cipher.git)
+git clone https://github.com/l01-jcc/Lorenz-Cipher
 cd Lorenz-Cipher
 ```
 **2. Set up a virtual environment (Required for Arch Linux):**
